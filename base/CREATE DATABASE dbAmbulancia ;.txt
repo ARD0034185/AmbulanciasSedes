@@ -1,0 +1,112 @@
+CREATE DATABASE dbAmbulancia ;
+use dbAmbulancia;
+
+-- Crear la tabla persona
+CREATE TABLE persona (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombres VARCHAR(50) NOT NULL,
+    primerApellido VARCHAR(50) NOT NULL,
+    segundoApellido VARCHAR(50),
+    carnet VARCHAR(25 ) NOT NULL,
+    fechaNacimiento DATETIME,
+    direccion VARCHAR(250) NOT NULL,
+    celular VARCHAR(25) NOT NULL,
+    UserId INT, -- Identificador de usuario asociado
+    status TINYINT NOT NULL DEFAULT 1,
+    registerDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    lastUpdate DATETIME NULL -- Última actualización (puede ser nulo)
+);
+
+-- Crear la tabla chofer que hereda de persona
+CREATE TABLE chofer (
+    id INT PRIMARY KEY,
+    categoria_licencia VARCHAR(10) NOT NULL,
+	antecedentes VARCHAR(150) NOT NULL,
+    hora_Entrada DATETIME,
+    hora_Salida DATETIME,
+    sueldo DECIMAL(8,2),
+    UserId INT, -- Identificador de usuario asociado
+    status TINYINT NOT NULL DEFAULT 1,
+    registerDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    lastUpdate DATETIME NULL, -- Última actualización (puede ser nulo)
+    FOREIGN KEY (id) REFERENCES persona(id) -- Relación de herencia (1 a 1) con persona
+);
+
+-- Crear la tabla paciente
+CREATE TABLE paciente (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+     nombres VARCHAR(50) NOT NULL,
+    primerApellido VARCHAR(50) NOT NULL,
+    segundoApellido VARCHAR(50),
+    estado_paciente VARCHAR(150),
+    carnet VARCHAR(25) NOT NULL,
+    fechaNacimiento DATETIME NOT NULL,
+    direccion VARCHAR(250) NOT NULL,
+    celular VARCHAR(25) NOT NULL,
+    direccion_accidente VARCHAR(250),
+    nombre_entidad VARCHAR(50) NOT NULL ,
+    persona_id INT, -- Identificador de la persona que registró al paciente
+    UserId INT, -- Identificador de usuario asociado
+    status TINYINT NOT NULL DEFAULT 1,
+    registerDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    lastUpdate DATETIME NULL, -- Última actualización (puede ser nulo)
+    FOREIGN KEY (persona_id) REFERENCES persona(id) -- Relación de muchos a uno con persona (muchos pacientes pueden ser registrados por una sola persona)
+);
+
+-- Crear la tabla ambulancia
+CREATE TABLE ambulancia (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero_placa VARCHAR(20) NOT NULL,
+    modelo VARCHAR(50) NOT NULL,
+    conductor_id INT, -- Identificador del conductor de la ambulancia
+    UserId INT, -- Identificador de usuario asociado
+    status TINYINT NOT NULL DEFAULT 1,
+    registerDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    lastUpdate DATETIME NULL, -- Última actualización (puede ser nulo)
+    FOREIGN KEY (conductor_id) REFERENCES chofer(id) -- Relación de muchos a uno con chofer (muchas ambulancias pueden ser conducidas por un solo chofer)
+);
+
+-- Crear la tabla usuarios
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY,
+    nombre_usuario VARCHAR(30) NOT NULL,
+    contrasenia VARBINARY(30) NOT NULL,
+    UserId INT, -- Identificador de usuario asociado
+    status TINYINT NOT NULL DEFAULT 1,
+    registerDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    lastUpdate DATETIME NULL, -- Última actualización (puede ser nulo)
+    FOREIGN KEY (id) REFERENCES persona(id) -- Relación de uno a uno con persona (una persona tiene un usuario y un usuario solo tiene una persona)
+);
+
+-- Insertar datos de ejemplo en la tabla paciente
+INSERT INTO paciente (nombres, primerApellido, segundoApellido, carnet, fechaNacimiento, direccion, celular, direccion_accidente, nombre_entidad, persona_id, UserId)
+VALUES ('Juan', 'Pérez', 'Gómez', '123ABC', '1990-05-15', 'Calle 123', '555-1234', 'Avenida Central', 'Hospital San Juan', 1, 2);
+
+-- Insertar datos de ejemplo en la tabla persona
+INSERT INTO persona (nombres, primerApellido, segundoApellido, carnet, fechaNacimiento, direccion, celular, UserId)
+VALUES ('Juan', 'Pérez', 'Gómez', '123ABC', '1990-05-15', 'Calle 123', '555-1234', 1);
+
+select * from persona;
+insert into persona( nombres, primerApellido , segundoApellido , carnet , fechaNacimiento , direccion,celular,UserId ) values( ? , ? , ? , ? , ? , ? , ?,?);
+update persona set  nombres = ? , primerApellido = ? , segundoApellido =  ? , carnet = ? , fechaNacimiento = ? , direccion = ? ,celular = ?, lastUpdate = CURRENT_TIMESTAMP ,  UserId = ? where id = ? ; 
+delete  from persona where id = ?;
+
+-- Insertar datos de ejemplo en la tabla chofer
+INSERT INTO chofer (id, categoria_licencia ,antecedentes, hora_Entrada, hora_Salida, sueldo, UserId)
+VALUES (1, 'B','Ninguno', '2024-03-31 08:00:00', '2024-03-31 17:00:00', 2000.00, 1);
+-- Insertar datos de ejemplo en la tabla usuarios
+INSERT INTO usuarios (id, nombre_usuario, contrasenia, UserId)
+VALUES (1, 'usuario1', 'contraseña1', 1);
+-- Insertar datos de ejemplo en la tabla ambulancia
+INSERT INTO ambulancia (numero_placa, modelo, conductor_id, UserId)
+VALUES ('ABC123', 'Toyota', 1, 1);
+
+
+select * from ambulancia;
+SELECT * FROM ambulancia WHERE id = ? ;
+insert into ambulancia( nombres, primerApellido , segundoApellido , carnet , fechaNacimiento , direccion,celular,UserId ) values( ? , ? , ? , ? , ? , ? , ?,?);
+
+
+
+
+	
